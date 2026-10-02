@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { CBAMDocument, ExtractedField } from '../../types/cbam';
 import { VerificationStateBadge } from '../common/StatusBadge';
+import { EmptyState } from '../common/EmptyState';
 import { 
   ShieldCheck, 
   CheckCircle2, 
@@ -123,8 +124,17 @@ export const HumanVerificationView: React.FC<HumanVerificationViewProps> = ({
         </div>
       </div>
 
-      {/* Verification Items List */}
-      <div className="space-y-4">
+      {/* Verification Items List or Empty State */}
+      {filteredItems.length === 0 ? (
+        <EmptyState
+          icon={CheckCircle2}
+          title="All evidence fields verified!"
+          description="There are no pending extraction fields requiring human gatekeeper sign-off under your active filter."
+          actionLabel="View All Extracted Fields"
+          onAction={() => setFilterMode('all')}
+        />
+      ) : (
+        <div className="space-y-4">
         {filteredItems.map(({ document, field }) => {
           const isEditing = editingFieldId === field.id;
 
@@ -284,6 +294,7 @@ export const HumanVerificationView: React.FC<HumanVerificationViewProps> = ({
           );
         })}
       </div>
+      )}
     </div>
   );
 };

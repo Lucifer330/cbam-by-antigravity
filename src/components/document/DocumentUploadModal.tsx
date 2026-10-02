@@ -34,6 +34,7 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
 
   const [uploadStage, setUploadStage] = useState<'idle' | 'received' | 'extracting' | 'preparing' | 'completed'>('idle');
   const [stageProgress, setStageProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Reset when opened
   useEffect(() => {
@@ -41,10 +42,30 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
       setSelectedFile(null);
       setUploadStage('idle');
       setStageProgress(0);
+      setIsDragging(false);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isDragging) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    handleSimulateUpload(0);
+  };
 
   const handleSimulateUpload = (presetIndex: number) => {
     const presets = [
@@ -208,13 +229,22 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                 {/* Drag and Drop Box */}
                 <div 
                   onClick={() => handleSimulateUpload(0)}
-                  className="border-2 border-dashed border-[#d8d8ce] hover:border-[#3d5042] rounded-[6px] p-8 text-center bg-[#fbfbfa] hover:bg-[#f6f6f3] transition-colors cursor-pointer group"
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`border-2 border-dashed rounded-[6px] p-8 text-center transition-all cursor-pointer group ${
+                    isDragging
+                      ? 'border-[#3d5042] bg-[#ecf7ef] scale-[1.01] ring-4 ring-[#c8e6ce]/50'
+                      : 'border-[#d8d8ce] hover:border-[#3d5042] bg-[#fbfbfa] hover:bg-[#f6f6f3]'
+                  }`}
                 >
-                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#eaf0eb] border border-[#c8e6ce] flex items-center justify-center text-[#3d5042] group-hover:scale-105 transition-transform">
+                  <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center transition-transform ${
+                    isDragging ? 'bg-[#3d5042] text-white scale-110' : 'bg-[#eaf0eb] border border-[#c8e6ce] text-[#3d5042] group-hover:scale-105'
+                  }`}>
                     <UploadCloud className="w-6 h-6" />
                   </div>
                   <div className="text-xs font-semibold text-[#191c1e]">
-                    Click to browse or drop supplier document here
+                    {isDragging ? 'Drop file now to ingest & fingerprint' : 'Click to browse or drop supplier document here'}
                   </div>
                   <div className="text-[11px] text-[#5a6065] mt-1">
                     Accepts PDF, XML (TARIC declaration), or EPD files up to 25 MB

@@ -38,6 +38,13 @@ export const ExtractionPanel: React.FC<ExtractionPanelProps> = ({
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
   const [editNotes, setEditNotes] = useState<string>('');
+  const [flashingFieldId, setFlashingFieldId] = useState<string | null>(null);
+
+  const handleConfirm = (fieldId: string) => {
+    setFlashingFieldId(fieldId);
+    onConfirmField(fieldId);
+    setTimeout(() => setFlashingFieldId(null), 450);
+  };
 
   const confirmedCount = document.extractedFields.filter(
     (f) => f.status === 'human_confirmed' || f.status === 'edited'
@@ -96,6 +103,7 @@ export const ExtractionPanel: React.FC<ExtractionPanelProps> = ({
         {document.extractedFields.map((field) => {
           const isSelected = highlightedFieldKey === field.fieldKey;
           const isEditing = editingFieldId === field.id;
+          const isFlashing = flashingFieldId === field.id;
 
           return (
             <div
@@ -104,7 +112,9 @@ export const ExtractionPanel: React.FC<ExtractionPanelProps> = ({
               onMouseLeave={() => onHoverField && onHoverField(null)}
               onClick={() => onSelectField && onSelectField(field.fieldKey)}
               className={`p-3.5 rounded-[5px] border transition-all cursor-pointer ${
-                isSelected
+                isFlashing
+                  ? 'animate-confirm-pulse border-[#1b6830] bg-[#ecf7ef]'
+                  : isSelected
                   ? 'bg-[#f7f9f7] border-[#3d5042] shadow-xs'
                   : 'bg-[#ffffff] border-[#e5e5de] hover:border-[#d2d2c8]'
               }`}
@@ -166,7 +176,7 @@ export const ExtractionPanel: React.FC<ExtractionPanelProps> = ({
                     <button
                       type="button"
                       onClick={() => setEditingFieldId(null)}
-                      className="px-2.5 py-1 rounded-[4px] bg-white border border-[#e5e5de] text-xs text-[#5a6065] hover:text-[#191c1e]"
+                      className="px-2.5 py-1 rounded-[4px] bg-white border border-[#e5e5de] text-xs text-[#5a6065] hover:text-[#191c1e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042]"
                     >
                       <X className="w-3 h-3 inline mr-1" />
                       Cancel
@@ -174,7 +184,7 @@ export const ExtractionPanel: React.FC<ExtractionPanelProps> = ({
                     <button
                       type="button"
                       onClick={() => saveEdit(field.id)}
-                      className="px-2.5 py-1 rounded-[4px] bg-[#191c1e] text-white text-xs font-medium hover:bg-[#2d3134]"
+                      className="px-2.5 py-1 rounded-[4px] bg-[#191c1e] text-white text-xs font-medium hover:bg-[#2d3134] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042]"
                     >
                       <Save className="w-3 h-3 inline mr-1" />
                       Save Correction
@@ -192,8 +202,8 @@ export const ExtractionPanel: React.FC<ExtractionPanelProps> = ({
                     {field.status !== 'human_confirmed' ? (
                       <button
                         type="button"
-                        onClick={() => onConfirmField(field.id)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#ecf7ef] text-[#1b6830] border border-[#c8e6ce] hover:bg-[#dff2e3] transition-colors"
+                        onClick={() => handleConfirm(field.id)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#ecf7ef] text-[#1b6830] border border-[#c8e6ce] hover:bg-[#dff2e3] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b6830]"
                         title="Sign off as verified input"
                       >
                         <CheckCircle2 className="w-3 h-3" />
@@ -209,7 +219,7 @@ export const ExtractionPanel: React.FC<ExtractionPanelProps> = ({
                     <button
                       type="button"
                       onClick={() => startEdit(field)}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded-[4px] text-xs font-medium bg-white text-[#5a6065] border border-[#e5e5de] hover:text-[#191c1e] hover:bg-[#f6f6f3] transition-colors"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-[4px] text-xs font-medium bg-white text-[#5a6065] border border-[#e5e5de] hover:text-[#191c1e] hover:bg-[#f6f6f3] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042]"
                       title="Edit value and document justification"
                     >
                       <Edit3 className="w-3 h-3" />

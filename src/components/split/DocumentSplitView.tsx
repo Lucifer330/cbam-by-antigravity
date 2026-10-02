@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { CBAMDocument } from '../../types/cbam';
 import { DocumentViewer } from '../document/DocumentViewer';
 import { ExtractionPanel } from '../extraction/ExtractionPanel';
+import { PipelineStepper } from '../common/PipelineStepper';
 import { ArrowLeft, FileText, ChevronDown, CheckCircle2 } from 'lucide-react';
 
 interface DocumentSplitViewProps {
@@ -71,6 +72,9 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
           </span>
         </div>
       </div>
+
+      {/* Active Document 6-Stage Pipeline Stepper Bar */}
+      <PipelineStepper documentStatus={currentDoc.status} compact />
 
       {/* Split-screen container: Stacks to single column below lg breakpoint, 7/5 split on lg+ */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 overflow-y-auto lg:overflow-hidden">

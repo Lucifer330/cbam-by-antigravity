@@ -179,7 +179,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                   key={item.id}
                   type="button"
                   onClick={() => onTabChange(item.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] font-medium transition-colors shrink-0 whitespace-nowrap ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] font-medium transition-colors shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042] focus-visible:ring-offset-1 ${
                     isActive
                       ? 'bg-[#191c1e] text-white shadow-2xs'
                       : 'text-[#5a6065] hover:text-[#191c1e] hover:bg-[#f4f4f0]'

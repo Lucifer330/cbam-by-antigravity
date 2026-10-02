@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { CBAMDocument, DocumentType, ComplianceStatus } from '../../types/cbam';
 import { StatusBadge } from '../common/StatusBadge';
+import { EmptyState } from '../common/EmptyState';
 import { 
   Search, 
   Filter, 
@@ -130,8 +131,23 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({
         </div>
       </div>
 
-      {/* Main Table */}
-      <div className="bg-[#ffffff] border border-[#e5e5de] rounded-[6px] overflow-hidden">
+      {/* Main Table or Empty State */}
+      {filteredDocs.length === 0 ? (
+        <EmptyState
+          icon={FileText}
+          title="No matching documents found"
+          description="No supplier invoices, mill certs or EPDs match your current search and filter criteria."
+          actionLabel="Clear Filters"
+          onAction={() => {
+            setSearch('');
+            setTypeFilter('ALL');
+            setStatusFilter('ALL');
+          }}
+          secondaryActionLabel="Add Supplier Evidence"
+          onSecondaryAction={onOpenUpload}
+        />
+      ) : (
+        <div className="bg-[#ffffff] border border-[#e5e5de] rounded-[6px] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -260,6 +276,7 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({
           </table>
         </div>
       </div>
+      )}
     </div>
   );
 };

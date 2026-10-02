@@ -2,6 +2,7 @@ import type { CBAMDocument, CalculationTrace } from '../../types/cbam';
 import { MetricStrip } from '../common/MetricStrip';
 import { StatusBadge } from '../common/StatusBadge';
 import { SplineHeroContainer } from '../common/SplineHeroContainer';
+import { PipelineStepper } from '../common/PipelineStepper';
 import { 
   FileText, 
   ArrowUpRight, 
@@ -71,6 +72,16 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Persistent 6-Stage CBAM Pipeline Stepper */}
+      <PipelineStepper 
+        onStageClick={(stage) => {
+          if (stage === 1) onOpenUpload();
+          else if (stage === 2 || stage === 3) onNavigateTab('verification');
+          else if (stage === 4 || stage === 5) onNavigateTab('calculations');
+          else if (stage === 6) onNavigateTab('exports');
+        }} 
+      />
 
       {/* Flexible Hero Section (with Spline 3D slot or interactive topology) */}
       <SplineHeroContainer

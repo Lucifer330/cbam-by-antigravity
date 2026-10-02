@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { CalculationTrace } from '../../types/cbam';
 import { TraceChain } from './TraceChain';
 import { ProvenanceDrawer } from '../common/ProvenanceDrawer';
+import { EmptyState } from '../common/EmptyState';
 import { 
   Calculator, 
   ShieldCheck, 
@@ -107,9 +108,15 @@ export const CalculationView: React.FC<CalculationViewProps> = ({
           </div>
         </div>
       ) : (
-        <div className="p-8 text-center text-xs text-[#5a6065] bg-white border rounded-[6px]">
-          No calculation traces generated yet. Confirm document fields to execute calculation.
-        </div>
+        <EmptyState
+          icon={Calculator}
+          title="No calculation traces generated yet"
+          description="Confirm extracted evidence fields in the Verification or Split View to execute the deterministic CBAM rules engine (v2026.1)."
+          actionLabel="Go to Human Verification"
+          onAction={() => {
+            if (onOpenDocumentViewer) onOpenDocumentViewer('doc-001');
+          }}
+        />
       )}
 
       {/* Slide-in Provenance Drawer */}

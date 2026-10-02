@@ -22,6 +22,7 @@ import { ExportPanel } from './components/export/ExportPanel';
 import { SettingsPanel } from './components/settings/SettingsPanel';
 import { DocumentUploadModal } from './components/document/DocumentUploadModal';
 import { ProvenanceDrawer } from './components/common/ProvenanceDrawer';
+import { ToastContainer, type ToastMessage } from './components/common/ToastContainer';
 
 export function App() {
   const [documents, setDocuments] = useState<CBAMDocument[]>(INITIAL_DOCUMENTS);
@@ -39,6 +40,18 @@ export function App() {
 
   // Upload Modal state
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+
+  // Global Toast State
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  const addToast = (title: string, message?: string, type: 'success' | 'info' | 'warning' = 'success') => {
+    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    setToasts((prev) => [...prev.slice(-2), { id, title, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
 
   // Spline 3D Hero Scene URL provided by user
   const [splineUrl, setSplineUrl] = useState<string>(
@@ -68,6 +81,9 @@ export function App() {
       details: `Received ${newDoc.documentType} for ${newDoc.productName} (${newDoc.cnCode}). Generated SHA-256 fingerprint.`
     };
     setAuditLogs((prev) => [newAudit, ...prev]);
+
+    // Toast confirmation
+    addToast('Document uploaded & fingerprinted', `SHA-256 locked for ${newDoc.filename}`, 'success');
 
     // Go directly to split screen to verify proposed fields
     setActiveTab('split-view');
@@ -119,6 +135,7 @@ export function App() {
         details: `Confirmed ${field.label} = ${field.value} against Page ${field.boundingBox.page} (x=${field.boundingBox.x}, y=${field.boundingBox.y}).`
       };
       setAuditLogs((prev) => [audit, ...prev]);
+      addToast('Field confirmed', `Signed off ${field.label} = ${field.value}`, 'success');
     }
   };
 
@@ -272,6 +289,13 @@ export function App() {
 
     setAuditLogs((prev) => [audit2, audit1, ...prev]);
 
+    // Toast notification for calculation
+    addToast(
+      'Calculation complete',
+      `${totalEmbedded.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tCO₂e embedded emissions computed`,
+      'success'
+    );
+
     // Jump to calculation view to view provenance
     setActiveTab('calculations');
   };
@@ -413,6 +437,9 @@ export function App() {
         trace={drawerTrace}
         onOpenDocument={handleInspectDocument}
       />
+
+      {/* Global Action Toast Notifications */}
+      <ToastContainer toasts={toasts} onCloseToast={removeToast} />
     </AppShell>
   );
 }
