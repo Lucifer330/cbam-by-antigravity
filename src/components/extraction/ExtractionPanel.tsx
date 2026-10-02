@@ -108,6 +108,8 @@ export const ExtractionPanel: React.FC<ExtractionPanelProps> = ({
           return (
             <div
               key={field.id}
+              id={`row-${field.fieldKey}`}
+              data-field-key={field.fieldKey}
               onMouseEnter={() => onHoverField && onHoverField(field.fieldKey)}
               onMouseLeave={() => onHoverField && onHoverField(null)}
               onClick={() => onSelectField && onSelectField(field.fieldKey)}

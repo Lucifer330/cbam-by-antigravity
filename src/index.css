@@ -254,5 +254,41 @@ canvas + a,
   }
 }
 
+/* Trace Beam Flow Animations */
+@keyframes beamTravelDown {
+  0% {
+    transform: translateY(0px);
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(34px);
+    opacity: 0.2;
+  }
+}
+
+.animate-beam-flow-0 { animation: beamTravelDown 2.2s cubic-bezier(0.4, 0, 0.2, 1) 0s infinite; }
+.animate-beam-flow-1 { animation: beamTravelDown 2.2s cubic-bezier(0.4, 0, 0.2, 1) 0.44s infinite; }
+.animate-beam-flow-2 { animation: beamTravelDown 2.2s cubic-bezier(0.4, 0, 0.2, 1) 0.88s infinite; }
+.animate-beam-flow-3 { animation: beamTravelDown 2.2s cubic-bezier(0.4, 0, 0.2, 1) 1.32s infinite; }
+.animate-beam-flow-4 { animation: beamTravelDown 2.2s cubic-bezier(0.4, 0, 0.2, 1) 1.76s infinite; }
+
+/* Split View Animated Beam Dash */
+@keyframes beamDash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.animate-beam-dash {
+  animation: beamDash 0.75s linear infinite;
+}
+
+
 
 

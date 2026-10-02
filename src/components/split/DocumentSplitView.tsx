@@ -3,6 +3,7 @@ import type { CBAMDocument } from '../../types/cbam';
 import { DocumentViewer } from '../document/DocumentViewer';
 import { ExtractionPanel } from '../extraction/ExtractionPanel';
 import { PipelineStepper } from '../common/PipelineStepper';
+import { HighlightBeamOverlay } from './HighlightBeamOverlay';
 import { ArrowLeft, FileText, ChevronDown, CheckCircle2 } from 'lucide-react';
 
 interface DocumentSplitViewProps {
@@ -101,6 +102,9 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
           />
         </div>
       </div>
+
+      {/* Signature Animated SVG Highlight Beam Overlay connecting PDF bbox to Extraction field */}
+      <HighlightBeamOverlay highlightedFieldKey={highlightedFieldKey} />
     </div>
   );
 };

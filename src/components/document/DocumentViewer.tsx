@@ -273,6 +273,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                 return (
                   <div
                     key={field.id}
+                    id={`bbox-${field.fieldKey}`}
+                    data-field-key={field.fieldKey}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (onSelectField) onSelectField(field.fieldKey);
