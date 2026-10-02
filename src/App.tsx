@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { 
   CBAMDocument, 
   CalculationTrace, 
@@ -23,6 +23,7 @@ import { SettingsPanel } from './components/settings/SettingsPanel';
 import { DocumentUploadModal } from './components/document/DocumentUploadModal';
 import { ProvenanceDrawer } from './components/common/ProvenanceDrawer';
 import { ToastContainer, type ToastMessage } from './components/common/ToastContainer';
+import { CommandPalette } from './components/common/CommandPalette';
 
 export function App() {
   const [documents, setDocuments] = useState<CBAMDocument[]>(INITIAL_DOCUMENTS);
@@ -41,8 +42,23 @@ export function App() {
   // Upload Modal state
   const [isUploadOpen, setIsUploadOpen] = useState(false);
 
+  // Command Palette state
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
   // Global Toast State
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  // Listen globally for Cmd+K / Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const addToast = (title: string, message?: string, type: 'success' | 'info' | 'warning' = 'success') => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -322,6 +338,7 @@ export function App() {
       }}
       awaitingVerificationCount={awaitingCount}
       onOpenUpload={() => setIsUploadOpen(true)}
+      onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
       activeRuleVersion={activeRule.version}
     >
       {/* Main Viewport Tab Container with Key-Based Smooth Fade Transition */}
@@ -422,6 +439,27 @@ export function App() {
           />
         )}
       </div>
+
+      {/* Global Command Palette (Cmd+K / Ctrl+K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        documents={documents}
+        onNavigateTab={(tab) => {
+          setActiveTab(tab);
+          setFocusedFieldKey(null);
+        }}
+        onSelectDocument={(docId) => handleInspectDocument(docId)}
+        onOpenUpload={() => setIsUploadOpen(true)}
+        onReplayTrace={
+          calculations.length > 0
+            ? () => {
+                handleOpenTraceDrawer(calculations[0]);
+                addToast('Trace Replayed', 'Replaying provenance trace animation.', 'info');
+              }
+            : undefined
+        }
+      />
 
       {/* Global Document Upload Modal */}
       <DocumentUploadModal

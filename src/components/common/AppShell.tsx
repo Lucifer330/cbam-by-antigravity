@@ -12,7 +12,8 @@ import {
   User, 
   GitBranch,
   Layers,
-  Upload
+  Upload,
+  Command
 } from 'lucide-react';
 
 interface AppShellProps {
@@ -20,6 +21,7 @@ interface AppShellProps {
   onTabChange: (tab: string) => void;
   awaitingVerificationCount: number;
   onOpenUpload: () => void;
+  onOpenCommandPalette?: () => void;
   activeRuleVersion: string;
   children: React.ReactNode;
 }
@@ -29,6 +31,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   onTabChange,
   awaitingVerificationCount,
   onOpenUpload,
+  onOpenCommandPalette,
   activeRuleVersion,
   children,
 }) => {
@@ -106,12 +109,23 @@ export const AppShell: React.FC<AppShellProps> = ({
           </div>
 
           {/* Top-Right: Workspace Selector, Primary Action & User Profile */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            {/* Command Palette Trigger Button */}
+            <button
+              type="button"
+              onClick={onOpenCommandPalette}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[4px] bg-[#fbfbfa] border border-[#d8d8ce] text-xs font-mono text-[#5a6065] hover:text-[#191c1e] hover:bg-[#f4f4f0] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042]"
+              title="Open Command Palette (Cmd+K / Ctrl+K)"
+            >
+              <Command className="w-3.5 h-3.5 text-[#3d5042]" />
+              <span className="font-semibold text-[#191c1e]">⌘K</span>
+            </button>
+
             {/* Quick Upload Button */}
             <button
               type="button"
               onClick={onOpenUpload}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#191c1e] text-white text-xs font-medium hover:bg-[#2d3134] transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#191c1e] text-white text-xs font-medium hover:bg-[#2d3134] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042]"
             >
               <Upload className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Add Evidence</span>
@@ -122,7 +136,7 @@ export const AppShell: React.FC<AppShellProps> = ({
               <button
                 type="button"
                 onClick={() => setWorkspaceMenuOpen(!workspaceMenuOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-[#fbfbfa] border border-[#d8d8ce] text-xs font-medium text-[#191c1e] hover:bg-[#f4f4f0] transition-colors max-w-[220px] truncate"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-[#fbfbfa] border border-[#d8d8ce] text-xs font-medium text-[#191c1e] hover:bg-[#f4f4f0] transition-colors max-w-[220px] truncate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042]"
               >
                 <Building2 className="w-3.5 h-3.5 text-[#3d5042] shrink-0" />
                 <span className="truncate">{selectedWorkspace.split(' ')[0]}</span>
