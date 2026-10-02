@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { CalculationTrace } from '../../types/cbam';
 import { TraceChain } from './TraceChain';
+import { WhatIfSandbox } from './WhatIfSandbox';
 import { ProvenanceDrawer } from '../common/ProvenanceDrawer';
 import { EmptyState } from '../common/EmptyState';
 import { 
@@ -100,6 +101,9 @@ export const CalculationView: React.FC<CalculationViewProps> = ({
             onStepClick={handleStepClick}
             onOpenDocumentViewer={onOpenDocumentViewer}
           />
+
+          {/* Interactive What-If Scenario Sandbox */}
+          <WhatIfSandbox trace={activeTrace} />
 
           {/* Disclaimer at bottom */}
           <div className="mt-6 pt-4 border-t border-[#e5e5de] text-center text-xs text-[#848a90]">
