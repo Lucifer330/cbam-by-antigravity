@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-main: #fbfbfa;
+    --bg-surface: #ffffff;
+    --bg-subtle: #f6f6f3;
+    --bg-panel: #f0f0eb;
+    --border-subtle: #e5e5de;
+    --border-strong: #d2d2c8;
+    --text-primary: #191c1e;
+    --text-secondary: #5a6065;
+    --text-muted: #848a90;
+    --accent-sage: #3d5042;
+    --accent-sage-light: #eaf0eb;
+    --accent-sage-dark: #2c3a30;
+    --status-verified-text: #1b6830;
+    --status-verified-bg: #ecf7ef;
+    --status-verified-border: #c8e6ce;
+    --status-warning-text: #9e5d03;
+    --status-warning-bg: #fef8eb;
+    --status-warning-border: #f8dfaa;
+    --status-error-text: #a82323;
+    --status-error-bg: #fdf2f2;
+    --status-error-border: #f7cece;
+  }
+
+  * {
+    border-color: var(--border-subtle);
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+
+  code, kbd, samp, pre {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+/* Custom subtle enterprise scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d6d6ce;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b5b5ac;
+}
+
+/* Subtle source highlight pulse */
+@keyframes sourcePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(61, 80, 66, 0.4);
+    background-color: rgba(220, 240, 224, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(61, 80, 66, 0);
+    background-color: rgba(220, 240, 224, 0.25);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(61, 80, 66, 0);
+    background-color: rgba(220, 240, 224, 0.35);
+  }
+}
+
+.source-highlight-active {
+  animation: sourcePulse 2s infinite ease-in-out;
+  outline: 2px solid #3d5042 !important;
+}
+
+/* Print styling for audit reports and official compliance documents */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Hide Spline branding, watermark links, and injected promotional buttons */
+#spline-watermark,
+a[href*="spline.design"],
+canvas + a,
+[class*="spline-watermark"],
+[aria-label*="spline" i] {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* 3D Transform perspectives */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1500 {
+  perspective: 1500px;
+}
+
+/* 3D Bevel & Text Shadows for CBAM Compliance Emblem */
+.text-3d-slate {
+  text-shadow: 
+    0 1px 0 #dcdcd6,
+    0 2px 0 #cfcfc8,
+    0 3px 0 #c2c2ba,
+    0 4px 0 #b5b5ac,
+    0 5px 2px rgba(25, 28, 30, 0.15),
+    0 8px 12px rgba(25, 28, 30, 0.2);
+}
+
+.shadow-3d-emblem {
+  box-shadow:
+    0 1px 0 #ffffff,
+    0 2px 0 #e5e5de,
+    0 4px 0 #d8d8ce,
+    0 6px 0 #cacabf,
+    0 10px 15px -3px rgba(44, 61, 49, 0.2),
+    0 20px 25px -5px rgba(25, 28, 30, 0.15);
+}
+
