@@ -384,8 +384,55 @@ export const INITIAL_DOCUMENTS: CBAMDocument[] = [
         verifiedAt: 'Sep 24, 11:32 CET'
       }
     ]
+  },
+  {
+    id: 'doc-007',
+    filename: 'hebei_iron_steel_wire_109.pdf',
+    fileSize: '2.9 MB',
+    sha256: 'e8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9',
+    supplier: 'Hebei Iron & Steel Co., Ltd.',
+    supplierCountry: 'CN (China)',
+    importer: 'ThyssenKrupp Euro-Import S.A. [DE94827103]',
+    productName: 'Blast furnace steel wire rod',
+    cnCode: '7213 91 10',
+    goodsCategory: 'Iron & Steel',
+    documentType: 'Mill test cert',
+    uploadedAt: 'Sep 23, 14:10 CET',
+    updatedAt: 'Sep 23, 15:45 CET',
+    status: 'Flagged anomaly',
+    traceabilityPercent: 45,
+    installationName: 'Tangshan Integrated Steel Works',
+    installationCountry: 'CN',
+    productionRoute: 'Blast Furnace - Basic Oxygen Furnace (BF-BOF)',
+    extractedFields: [
+      {
+        id: 'f-007-1',
+        fieldKey: 'net_mass',
+        label: 'Net mass',
+        value: '1,800 t',
+        numericValue: 1800,
+        unit: 't',
+        confidence: 0.96,
+        boundingBox: { page: 1, x: 140, y: 310, width: 130, height: 24 },
+        status: 'ai_proposed'
+      },
+      {
+        id: 'f-007-2',
+        fieldKey: 'emissions_direct',
+        label: 'Direct specific emissions',
+        value: '4.85 tCO₂e/t',
+        numericValue: 4.85,
+        unit: 'tCO₂e/t',
+        confidence: 0.82,
+        lowConfidenceFlag: true,
+        boundingBox: { page: 1, x: 140, y: 430, width: 160, height: 26 },
+        status: 'rejected',
+        notes: 'FLAGGED ANOMALY: Direct emissions intensity (4.85 tCO₂e/t) exceeds EU Art. 7 maximum benchmark for BF-BOF wire rod by +115%. Requires verifier clarification.'
+      }
+    ]
   }
 ];
+
 
 export const INITIAL_CALCULATIONS: CalculationTrace[] = [
   {

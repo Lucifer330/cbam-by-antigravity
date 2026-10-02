@@ -63,7 +63,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5 font-medium text-[#c5d3c8]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#a3e635]" />
-            EU Regulation (EU) 2023/956 Compliant
+            EU Regulation (EU) 2023/956 — Declaration Assistance Tool
           </span>
           <span className="text-[#848a90] hidden md:inline">|</span>
           <span className="text-[#a0a5aa] hidden md:inline">
@@ -179,7 +179,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                   key={item.id}
                   type="button"
                   onClick={() => onTabChange(item.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] font-medium transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] font-medium transition-colors shrink-0 whitespace-nowrap ${
                     isActive
                       ? 'bg-[#191c1e] text-white shadow-2xs'
                       : 'text-[#5a6065] hover:text-[#191c1e] hover:bg-[#f4f4f0]'

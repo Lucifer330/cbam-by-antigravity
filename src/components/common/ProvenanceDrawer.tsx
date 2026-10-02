@@ -26,7 +26,26 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
   trace,
   onOpenDocument
 }) => {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
+  const [shouldRender, setShouldRender] = useState(isOpen);
+  const [animateIn, setAnimateIn] = useState(false);
+  const activeTraceRef = React.useRef<CalculationTrace | null>(trace);
+
+  if (trace) {
+    activeTraceRef.current = trace;
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      const timer = setTimeout(() => setAnimateIn(true), 10);
+      return () => clearTimeout(timer);
+    } else {
+      setAnimateIn(false);
+      const timer = setTimeout(() => setShouldRender(false), 250);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   // Close on Escape key
   React.useEffect(() => {
@@ -39,27 +58,36 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  if (!isOpen || !trace) return null;
+  const currentTrace = trace || activeTraceRef.current;
+
+  if (!shouldRender || !currentTrace) return null;
 
   const handleCopyJson = () => {
-    navigator.clipboard.writeText(JSON.stringify(trace, null, 2));
+    navigator.clipboard.writeText(JSON.stringify(currentTrace, null, 2));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const primaryInput = trace.verifiedInputs[1] || trace.verifiedInputs[0];
+  const primaryInput = currentTrace.verifiedInputs[1] || currentTrace.verifiedInputs[0];
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="provenance-title">
-      {/* Dimmed backdrop with light-dismiss */}
+      {/* Dimmed backdrop with light-dismiss & fade transition */}
       <div 
-        className="fixed inset-0 bg-[#121614]/40 transition-opacity backdrop-blur-[1px]"
+        className={`fixed inset-0 bg-[#121614]/40 backdrop-blur-[1px] transition-opacity duration-250 ease-out ${
+          animateIn ? 'opacity-100 animate-backdrop-in' : 'opacity-0 animate-backdrop-out'
+        }`}
         onClick={onClose}
         aria-hidden="true"
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-lg bg-[#ffffff] border-l border-[#e2e2dc] shadow-xl flex flex-col">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10 pointer-events-auto">
+        <div 
+          className={`w-screen max-w-lg bg-[#ffffff] border-l border-[#e2e2dc] shadow-xl flex flex-col transform transition-transform duration-250 ease-out ${
+            animateIn ? 'translate-x-0 animate-drawer-in' : 'translate-x-full animate-drawer-out'
+          }`}
+        >
+
           {/* Header */}
           <div className="px-6 py-4 border-b border-[#e5e5de] bg-[#fbfbfa] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -89,7 +117,7 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
           <div className="px-6 py-2.5 bg-[#f6f6f3] border-b border-[#e5e5de] flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
               <span className="text-[#5a6065]">Trace ID:</span>
-              <span className="font-mono text-[#191c1e] font-medium">{trace.id}</span>
+              <span className="font-mono text-[#191c1e] font-medium">{currentTrace.id}</span>
             </div>
             <span className="inline-flex items-center gap-1 text-[#1b6830] font-medium">
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -107,14 +135,14 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-semibold tracking-tight text-[#191c1e] font-mono">
-                  {trace.resultValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {currentTrace.resultValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
                 <span className="text-sm font-medium text-[#5a6065] font-mono">
-                  {trace.resultUnit}
+                  {currentTrace.resultUnit}
                 </span>
               </div>
               <div className="text-xs text-[#5a6065] mt-1">
-                {trace.resultLabel} (Direct: {trace.directEmissionsTonnes.toLocaleString()} t + Indirect: {trace.indirectEmissionsTonnes.toLocaleString()} t)
+                {currentTrace.resultLabel} (Direct: {currentTrace.directEmissionsTonnes.toLocaleString()} t + Indirect: {currentTrace.indirectEmissionsTonnes.toLocaleString()} t)
               </div>
             </div>
 
@@ -131,10 +159,10 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
                 </div>
                 <div className="text-xs font-medium text-[#848a90]">FORMULA (DETERMINISTIC)</div>
                 <div className="mt-1 font-mono text-sm font-medium text-[#191c1e] bg-[#f6f6f3] px-3 py-2 rounded-[4px] border border-[#e5e5de]">
-                  {trace.formulaDisplay}
+                  {currentTrace.formulaDisplay}
                 </div>
                 <div className="text-xs text-[#5a6065] mt-1 font-mono">
-                  {trace.formula}
+                  {currentTrace.formula}
                 </div>
               </div>
 
@@ -147,12 +175,12 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
                 <div className="mt-1 flex items-center gap-2">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] bg-[#eaf0eb] text-[#2c3d31] border border-[#c5d3c8]">
                     <GitBranch className="w-3 h-3 text-[#3d5042]" />
-                    {trace.ruleVersion}
+                    {currentTrace.ruleVersion}
                   </span>
-                  <span className="text-xs font-medium text-[#191c1e]">{trace.ruleName}</span>
+                  <span className="text-xs font-medium text-[#191c1e]">{currentTrace.ruleName}</span>
                 </div>
                 <div className="text-xs text-[#5a6065] mt-1">
-                  Legal Reference: {trace.regulationReference}
+                  Legal Reference: {currentTrace.regulationReference}
                 </div>
               </div>
 
@@ -163,7 +191,7 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
                 </div>
                 <div className="text-xs font-medium text-[#848a90]">VERIFIED INPUTS (HUMAN GATEKEEPER)</div>
                 <div className="mt-2 space-y-2">
-                  {trace.verifiedInputs.map((input, idx) => (
+                  {currentTrace.verifiedInputs.map((input, idx) => (
                     <div key={idx} className="p-2.5 rounded-[4px] bg-[#fbfbfa] border border-[#e5e5de] text-xs space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-[#191c1e]">{input.label}</span>
@@ -215,12 +243,12 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
                 <div className="mt-1 p-3 rounded-[4px] bg-[#fbfbfa] border border-[#e5e5de] space-y-2">
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-[#3d5042] shrink-0" />
-                    <span className="text-xs font-medium text-[#191c1e] truncate">{trace.documentName}</span>
+                    <span className="text-xs font-medium text-[#191c1e] truncate">{currentTrace.documentName}</span>
                   </div>
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-[#848a90] mb-0.5">SHA-256 Evidence Hash</div>
                     <div className="font-mono text-[10px] text-[#5a6065] break-all bg-white p-1.5 rounded border border-[#e5e5de]">
-                      {trace.documentHash}
+                      {currentTrace.documentHash}
                     </div>
                   </div>
                 </div>
@@ -234,7 +262,7 @@ export const ProvenanceDrawer: React.FC<ProvenanceDrawerProps> = ({
                 onClick={() => {
                   onClose();
                   if (onOpenDocument) {
-                    onOpenDocument(trace.documentId, primaryInput.sourceFieldKey);
+                    onOpenDocument(currentTrace.documentId, primaryInput.sourceFieldKey);
                   }
                 }}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium rounded-[4px] bg-[#191c1e] text-white hover:bg-[#2d3134] transition-colors"

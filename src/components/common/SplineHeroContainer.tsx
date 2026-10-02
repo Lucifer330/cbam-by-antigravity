@@ -29,7 +29,7 @@ export const SplineHeroContainer: React.FC<SplineHeroContainerProps> = ({
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#1b6830]" />
           <span className="text-xs font-semibold text-[#191c1e] tracking-tight">
-            EU Regulation (EU) 2023/956 Live Verification Pipeline
+            EU Regulation (EU) 2023/956 — Evidence Lineage Demo
           </span>
           <span className="text-[11px] font-mono text-[#5a6065] bg-white px-2 py-0.5 rounded border border-[#e5e5de]">
             Transitional Period 2026

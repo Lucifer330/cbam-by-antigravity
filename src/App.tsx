@@ -300,101 +300,104 @@ export function App() {
       onOpenUpload={() => setIsUploadOpen(true)}
       activeRuleVersion={activeRule.version}
     >
-      {/* 1. OVERVIEW / WORKSPACE */}
-      {activeTab === 'overview' && (
-        <OverviewView
-          documents={documents}
-          calculations={calculations}
-          onNavigateTab={(tab) => setActiveTab(tab)}
-          onSelectDocument={(doc) => {
-            setSelectedDocId(doc.id);
-            setActiveTab('split-view');
-          }}
-          onOpenUpload={() => setIsUploadOpen(true)}
-          onTraceClick={handleOpenTraceDrawer}
-          splineUrl={splineUrl}
-          onUpdateSplineUrl={setSplineUrl}
-        />
-      )}
+      {/* Main Viewport Tab Container with Key-Based Smooth Fade Transition */}
+      <div key={activeTab} className="animate-tab-fade">
+        {/* 1. OVERVIEW / WORKSPACE */}
+        {activeTab === 'overview' && (
+          <OverviewView
+            documents={documents}
+            calculations={calculations}
+            onNavigateTab={(tab) => setActiveTab(tab)}
+            onSelectDocument={(doc) => {
+              setSelectedDocId(doc.id);
+              setActiveTab('split-view');
+            }}
+            onOpenUpload={() => setIsUploadOpen(true)}
+            onTraceClick={handleOpenTraceDrawer}
+            splineUrl={splineUrl}
+            onUpdateSplineUrl={setSplineUrl}
+          />
+        )}
 
-      {/* 2 & 3. SPLIT DOCUMENT + EXTRACTION VIEW */}
-      {activeTab === 'split-view' && (
-        <DocumentSplitView
-          documents={documents}
-          currentDocumentId={selectedDocId}
-          onSelectDocumentId={setSelectedDocId}
-          onBack={() => setActiveTab('overview')}
-          onConfirmField={handleConfirmField}
-          onEditField={handleEditField}
-          onRejectField={handleRejectField}
-          onRunCalculation={handleRunCalculation}
-          initialFocusedFieldKey={focusedFieldKey}
-        />
-      )}
+        {/* 2 & 3. SPLIT DOCUMENT + EXTRACTION VIEW */}
+        {activeTab === 'split-view' && (
+          <DocumentSplitView
+            documents={documents}
+            currentDocumentId={selectedDocId}
+            onSelectDocumentId={setSelectedDocId}
+            onBack={() => setActiveTab('overview')}
+            onConfirmField={handleConfirmField}
+            onEditField={handleEditField}
+            onRejectField={handleRejectField}
+            onRunCalculation={handleRunCalculation}
+            initialFocusedFieldKey={focusedFieldKey}
+          />
+        )}
 
-      {/* 4. DOCUMENT TABLE */}
-      {activeTab === 'documents' && (
-        <DocumentTable
-          documents={documents}
-          onSelectDocument={(doc) => {
-            setSelectedDocId(doc.id);
-            setActiveTab('split-view');
-          }}
-          onOpenUpload={() => setIsUploadOpen(true)}
-          onViewProvenance={(docId) => {
-            const trace = calculations.find((c) => c.documentId === docId);
-            if (trace) {
-              handleOpenTraceDrawer(trace);
-            }
-          }}
-        />
-      )}
+        {/* 4. DOCUMENT TABLE */}
+        {activeTab === 'documents' && (
+          <DocumentTable
+            documents={documents}
+            onSelectDocument={(doc) => {
+              setSelectedDocId(doc.id);
+              setActiveTab('split-view');
+            }}
+            onOpenUpload={() => setIsUploadOpen(true)}
+            onViewProvenance={(docId) => {
+              const trace = calculations.find((c) => c.documentId === docId);
+              if (trace) {
+                handleOpenTraceDrawer(trace);
+              }
+            }}
+          />
+        )}
 
-      {/* 5. HUMAN VERIFICATION SCREEN */}
-      {activeTab === 'verification' && (
-        <HumanVerificationView
-          documents={documents}
-          onConfirmField={handleConfirmField}
-          onEditField={handleEditField}
-          onRejectField={handleRejectField}
-          onOpenDocumentViewer={handleInspectDocument}
-        />
-      )}
+        {/* 5. HUMAN VERIFICATION SCREEN */}
+        {activeTab === 'verification' && (
+          <HumanVerificationView
+            documents={documents}
+            onConfirmField={handleConfirmField}
+            onEditField={handleEditField}
+            onRejectField={handleRejectField}
+            onOpenDocumentViewer={handleInspectDocument}
+          />
+        )}
 
-      {/* 6. CALCULATION / TRACE VIEW */}
-      {activeTab === 'calculations' && (
-        <CalculationView
-          calculations={calculations}
-          onOpenDocumentViewer={handleInspectDocument}
-        />
-      )}
+        {/* 6. CALCULATION / TRACE VIEW */}
+        {activeTab === 'calculations' && (
+          <CalculationView
+            calculations={calculations}
+            onOpenDocumentViewer={handleInspectDocument}
+          />
+        )}
 
-      {/* 7. AUDIT TRAIL */}
-      {activeTab === 'audit' && (
-        <AuditTimeline
-          logs={auditLogs}
-          onExportAudit={() => setActiveTab('exports')}
-        />
-      )}
+        {/* 7. AUDIT TRAIL */}
+        {activeTab === 'audit' && (
+          <AuditTimeline
+            logs={auditLogs}
+            onExportAudit={() => setActiveTab('exports')}
+          />
+        )}
 
-      {/* 8. EXPORT SCREEN */}
-      {activeTab === 'exports' && (
-        <ExportPanel
-          calculations={calculations}
-          documents={documents}
-        />
-      )}
+        {/* 8. EXPORT SCREEN */}
+        {activeTab === 'exports' && (
+          <ExportPanel
+            calculations={calculations}
+            documents={documents}
+          />
+        )}
 
-      {/* 9. SETTINGS */}
-      {activeTab === 'settings' && (
-        <SettingsPanel
-          ruleVersions={ruleVersions}
-          activeRuleId={activeRuleId}
-          onSelectRuleVersion={setActiveRuleId}
-          splineUrl={splineUrl}
-          onUpdateSplineUrl={setSplineUrl}
-        />
-      )}
+        {/* 9. SETTINGS */}
+        {activeTab === 'settings' && (
+          <SettingsPanel
+            ruleVersions={ruleVersions}
+            activeRuleId={activeRuleId}
+            onSelectRuleVersion={setActiveRuleId}
+            splineUrl={splineUrl}
+            onUpdateSplineUrl={setSplineUrl}
+          />
+        )}
+      </div>
 
       {/* Global Document Upload Modal */}
       <DocumentUploadModal

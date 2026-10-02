@@ -31,7 +31,7 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
   const [highlightedFieldKey, setHighlightedFieldKey] = useState<string | null>(initialFocusedFieldKey || null);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] min-h-[640px] space-y-3">
+    <div className="flex flex-col lg:h-[calc(100vh-140px)] min-h-[640px] space-y-3">
       {/* Sub-header with document switcher & navigation */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-2.5 border border-[#e5e5de] rounded-[6px]">
         <div className="flex items-center gap-3">
@@ -72,10 +72,10 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
         </div>
       </div>
 
-      {/* Split-screen container: Left = Document Viewer, Right = Extraction Panel */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 overflow-hidden">
+      {/* Split-screen container: Stacks to single column below lg breakpoint, 7/5 split on lg+ */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 overflow-y-auto lg:overflow-hidden">
         {/* Left Side: Document Viewer (7 cols on lg) */}
-        <div className="lg:col-span-7 h-full overflow-hidden">
+        <div className="lg:col-span-7 min-h-[500px] lg:min-h-0 lg:h-full overflow-hidden">
           <DocumentViewer
             document={currentDoc}
             highlightedFieldKey={highlightedFieldKey}
@@ -84,7 +84,7 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
         </div>
 
         {/* Right Side: Extraction Panel (5 cols on lg) */}
-        <div className="lg:col-span-5 h-full overflow-hidden">
+        <div className="lg:col-span-5 min-h-[500px] lg:min-h-0 lg:h-full overflow-hidden">
           <ExtractionPanel
             document={currentDoc}
             highlightedFieldKey={highlightedFieldKey}
