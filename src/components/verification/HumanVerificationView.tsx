@@ -3,6 +3,7 @@ import type { CBAMDocument, ExtractedField } from '../../types/cbam';
 import { VerificationStateBadge } from '../common/StatusBadge';
 import { EmptyState } from '../common/EmptyState';
 import { SplitPaneAuditViewer } from '../split/SplitPaneAuditViewer';
+import { CyberpunkSplitViewer } from '../split/CyberpunkSplitViewer';
 import { 
   ShieldCheck, 
   CheckCircle2, 
@@ -17,7 +18,8 @@ import {
   XCircle,
   Filter,
   Columns,
-  List
+  List,
+  Sparkles
 } from 'lucide-react';
 
 interface HumanVerificationViewProps {
@@ -35,7 +37,7 @@ export const HumanVerificationView: React.FC<HumanVerificationViewProps> = ({
   onRejectField,
   onOpenDocumentViewer,
 }) => {
-  const [viewLayout, setViewLayout] = useState<'split' | 'table'>('split');
+  const [viewLayout, setViewLayout] = useState<'split' | 'cyberpunk' | 'table'>('cyberpunk');
   const [selectedDocId, setSelectedDocId] = useState<string>(documents[0]?.id || '');
   const [filterMode, setFilterMode] = useState<'all' | 'pending' | 'confirmed'>('all');
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
@@ -93,12 +95,25 @@ export const HumanVerificationView: React.FC<HumanVerificationViewProps> = ({
 
         {/* View Layout Switcher & Filters */}
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Dual-Pane vs Table Toggle */}
+          {/* Layout Mode Switcher */}
           <div className="inline-flex rounded-[6px] bg-[var(--bg-subtle)] p-0.5 border border-[var(--border-strong)] text-xs">
             <button
               type="button"
+              onClick={() => setViewLayout('cyberpunk')}
+              aria-label="3D Cyberpunk Split Mode"
+              className={`px-3 py-1 rounded-[4px] font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
+                viewLayout === 'cyberpunk'
+                  ? 'bg-[#10b981] text-[#022c22] font-bold shadow-xs'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Cyberpunk Split</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setViewLayout('split')}
-              aria-label="Split Screen Inspector Mode"
+              aria-label="Standard Split Mode"
               className={`px-3 py-1 rounded-[4px] font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
                 viewLayout === 'split'
                   ? 'bg-[var(--accent-sage)] text-white shadow-xs'
@@ -122,6 +137,7 @@ export const HumanVerificationView: React.FC<HumanVerificationViewProps> = ({
               <span>Table View</span>
             </button>
           </div>
+
 
           {/* Filter controls (for table view) */}
           {viewLayout === 'table' && (
@@ -164,8 +180,39 @@ export const HumanVerificationView: React.FC<HumanVerificationViewProps> = ({
         </div>
       </div>
 
-      {/* ───────────────── VIEW MODE 1: DUAL-PANE SPLIT SCREEN ───────────────── */}
-      {viewLayout === 'split' ? (
+      {/* ───────────────── VIEW MODE 1: CYBERPUNK 3D SPLIT SCREEN ───────────────── */}
+      {viewLayout === 'cyberpunk' ? (
+        <div className="space-y-4">
+          {/* Document Switcher Pill Bar */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <span className="text-xs font-semibold text-[#a7f3d0] font-mono shrink-0">
+              Active Stream:
+            </span>
+            {documents.map((doc) => {
+              const isSelected = doc.id === activeDoc.id;
+              return (
+                <button
+                  key={doc.id}
+                  onClick={() => setSelectedDocId(doc.id)}
+                  className={`px-3 py-1.5 rounded-[6px] text-xs font-mono font-semibold transition-all shrink-0 cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#10b981] text-[#022c22] shadow-[0_0_12px_rgba(16,185,129,0.5)]'
+                      : 'bg-[#0b1410] text-[#94a3b8] hover:text-white border border-[#1b3325]'
+                  }`}
+                >
+                  {doc.filename} ({doc.extractedFields.filter(f => f.status === 'human_confirmed').length}/{doc.extractedFields.length})
+                </button>
+              );
+            })}
+          </div>
+
+          <CyberpunkSplitViewer
+            document={activeDoc}
+            onConfirmField={(fieldId) => onConfirmField(activeDoc.id, fieldId)}
+            onRunCalculation={() => onOpenDocumentViewer(activeDoc.id)}
+          />
+        </div>
+      ) : viewLayout === 'split' ? (
         <div className="space-y-4">
           {/* Document Switcher Pill Bar */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1">

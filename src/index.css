@@ -363,3 +363,33 @@ canvas + a,
 .animate-waveform-3 { animation: waveFrequency 0.8s ease-in-out 0.3s infinite; }
 .animate-waveform-4 { animation: waveFrequency 0.8s ease-in-out 0.45s infinite; }
 .animate-waveform-5 { animation: waveFrequency 0.8s ease-in-out 0.6s infinite; }
+
+/* Neon Bounding Box Pulse */
+@keyframes neonBoxPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    border-color: #10b981;
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(16, 185, 129, 0.4);
+    border-color: #34d399;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    border-color: #10b981;
+  }
+}
+
+.neon-pulse-active {
+  animation: neonBoxPulse 1.6s infinite cubic-bezier(0.16, 1, 0.3, 1);
+  outline: 2px solid #10b981 !important;
+}
+
+/* Glassmorphic Cyber Surface */
+.glass-cyber-panel {
+  background: rgba(13, 20, 16, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+}
