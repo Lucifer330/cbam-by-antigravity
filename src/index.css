@@ -331,21 +331,35 @@ canvas + a,
 .reveal-delay-300 { transition-delay: 300ms; }
 .reveal-delay-400 { transition-delay: 400ms; }
 
-/* Audio Waveform Micro-Bar Animations */
-@keyframes waveFrequency {
-  0%, 100% {
-    transform: scaleY(0.3);
-    opacity: 0.6;
+/* High-Contrast Focus Pulse for Line-Item Coordinate Bounding Boxes */
+@keyframes sourcePulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(78, 107, 86, 0.6);
+    background-color: rgba(78, 107, 86, 0.25);
   }
-  50% {
-    transform: scaleY(1.4);
-    opacity: 1;
+  70% {
+    box-shadow: 0 0 0 8px rgba(78, 107, 86, 0);
+    background-color: rgba(78, 107, 86, 0.12);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(78, 107, 86, 0);
+    background-color: rgba(78, 107, 86, 0.2);
   }
 }
 
-.animate-waveform-1 { animation: waveFrequency 0.75s ease-in-out 0.0s infinite; }
-.animate-waveform-2 { animation: waveFrequency 0.75s ease-in-out 0.12s infinite; }
-.animate-waveform-3 { animation: waveFrequency 0.75s ease-in-out 0.24s infinite; }
-.animate-waveform-4 { animation: waveFrequency 0.75s ease-in-out 0.36s infinite; }
-.animate-waveform-5 { animation: waveFrequency 0.75s ease-in-out 0.48s infinite; }
-.animate-waveform-6 { animation: waveFrequency 0.75s ease-in-out 0.60s infinite; }
+.source-highlight-active {
+  animation: sourcePulseRing 1.8s infinite cubic-bezier(0.16, 1, 0.3, 1);
+  outline: 2px solid var(--accent-sage) !important;
+}
+
+/* Audio Waveform Micro-Bar Animations */
+@keyframes waveFrequency {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1.4); }
+}
+
+.animate-waveform-1 { animation: waveFrequency 0.8s ease-in-out 0.0s infinite; }
+.animate-waveform-2 { animation: waveFrequency 0.8s ease-in-out 0.15s infinite; }
+.animate-waveform-3 { animation: waveFrequency 0.8s ease-in-out 0.3s infinite; }
+.animate-waveform-4 { animation: waveFrequency 0.8s ease-in-out 0.45s infinite; }
+.animate-waveform-5 { animation: waveFrequency 0.8s ease-in-out 0.6s infinite; }

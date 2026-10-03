@@ -24,7 +24,6 @@ import { DocumentUploadModal } from './components/document/DocumentUploadModal';
 import { ProvenanceDrawer } from './components/common/ProvenanceDrawer';
 import { ToastContainer, type ToastMessage } from './components/common/ToastContainer';
 import { CommandPalette } from './components/common/CommandPalette';
-import { VoiceAssistantWidget } from './components/voice/VoiceAssistantWidget';
 
 export function App() {
   const [documents, setDocuments] = useState<CBAMDocument[]>(INITIAL_DOCUMENTS);
@@ -479,21 +478,6 @@ export function App() {
 
       {/* Global Action Toast Notifications */}
       <ToastContainer toasts={toasts} onCloseToast={removeToast} />
-
-      {/* Floating AI Voice Auditor Assistant */}
-      <VoiceAssistantWidget
-        onHighlightField={(fieldKey) => {
-          setSelectedDocId('doc-001');
-          setFocusedFieldKey(fieldKey);
-          setActiveTab('split-view');
-          addToast('Voice Audit Executed', `Targeting ${fieldKey} coordinates on active document.`, 'info');
-        }}
-        onOpenTraceDrawer={() => {
-          if (calculations.length > 0) {
-            handleOpenTraceDrawer(calculations[0]);
-          }
-        }}
-      />
     </AppShell>
   );
 }

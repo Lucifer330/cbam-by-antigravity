@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../../hooks/useTheme';
 import { KeyboardShortcutsModal } from './KeyboardShortcutsModal';
+import { VoiceAssistantWidget } from './VoiceAssistantWidget';
 
 interface AppShellProps {
   activeTab: string;
@@ -304,6 +305,9 @@ export const AppShell: React.FC<AppShellProps> = ({
         isOpen={isShortcutsOpen} 
         onClose={() => setIsShortcutsOpen(false)} 
       />
+
+      {/* Floating Voice AI Assistant Widget */}
+      <VoiceAssistantWidget />
     </div>
   );
 };
