@@ -25,6 +25,30 @@
     --status-error-border: #f7cece;
   }
 
+  [data-theme="dark"], .dark {
+    --bg-main: #0d1210;
+    --bg-surface: #141917;
+    --bg-subtle: #19201d;
+    --bg-panel: #202723;
+    --border-subtle: #29342e;
+    --border-strong: #3b4941;
+    --text-primary: #e8ece9;
+    --text-secondary: #9da7a0;
+    --text-muted: #727c75;
+    --accent-sage: #52745d;
+    --accent-sage-light: #1b2820;
+    --accent-sage-dark: #8cb698;
+    --status-verified-text: #4ade80;
+    --status-verified-bg: #0d2916;
+    --status-verified-border: #166534;
+    --status-warning-text: #fbbf24;
+    --status-warning-bg: #2d1f03;
+    --status-warning-border: #854d0e;
+    --status-error-text: #f87171;
+    --status-error-bg: #300f0f;
+    --status-error-border: #991b1b;
+  }
+
   * {
     border-color: var(--border-subtle);
   }

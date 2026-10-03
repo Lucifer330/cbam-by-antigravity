@@ -12,12 +12,15 @@ import {
   ChevronRight, 
   Menu, 
   X, 
-  Info
+  Info,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { HeroProvenancePreview } from './HeroProvenancePreview';
 import { PipelineInteractive } from './PipelineInteractive';
 import { InteractiveTraceDemo } from './InteractiveTraceDemo';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import { useTheme } from '../../hooks/useTheme';
 
 interface LandingPageProps {
   onLaunchApp: () => void;
@@ -25,6 +28,7 @@ interface LandingPageProps {
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isDark, toggleTheme } = useTheme();
 
   // Scroll reveal refs for each section
   const heroRevealRef = useScrollReveal<HTMLDivElement>();
@@ -193,8 +197,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
             </button>
           </nav>
 
-          {/* Nav Right CTA */}
-          <div className="flex items-center gap-3">
+          {/* Nav Right CTA & Theme Toggle */}
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              className="p-2 rounded-[6px] border border-[#d2d2c8] bg-white text-[#5a6065] hover:text-[#191c1e] hover:bg-[#f6f6f3] transition-colors cursor-pointer shadow-2xs"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-[#fbbf24]" /> : <Moon className="w-4 h-4 text-[#4b5563]" />}
+            </button>
+
             <button
               onClick={onLaunchApp}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] bg-[#2c3a30] hover:bg-[#1f2c23] text-white text-xs md:text-sm font-medium shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"

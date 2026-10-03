@@ -7,10 +7,9 @@ import {
   CheckCircle2, 
   Clock, 
   Sparkles, 
-  AlertCircle, 
-  Hash,
   ShieldCheck
 } from 'lucide-react';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 
 interface DocumentUploadModalProps {
   isOpen: boolean;
@@ -35,6 +34,8 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
   const [uploadStage, setUploadStage] = useState<'idle' | 'received' | 'extracting' | 'preparing' | 'completed'>('idle');
   const [stageProgress, setStageProgress] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+
+  const containerRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   // Reset when opened
   useEffect(() => {
@@ -146,18 +147,19 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
             numericValue: 1250,
             unit: 't',
             confidence: 0.98,
-            boundingBox: { page: 1, x: 140, y: 340, width: 130, height: 25 },
+            boundingBox: { page: 1, x: 140, y: 360, width: 140, height: 26 },
             status: 'ai_proposed',
-            notes: 'Extracted from commercial delivery receipt'
+            notes: 'Verified against consignment manifest weight note'
           },
           {
             id: `f-${Date.now()}-2`,
             fieldKey: 'cn_code',
             label: 'CN code',
             value: file.cnCode,
-            confidence: 0.96,
-            boundingBox: { page: 1, x: 120, y: 250, width: 120, height: 24 },
-            status: 'ai_proposed'
+            confidence: 0.95,
+            boundingBox: { page: 1, x: 120, y: 240, width: 130, height: 24 },
+            status: 'ai_proposed',
+            notes: 'TARIC goods code matched'
           },
           {
             id: `f-${Date.now()}-3`,
@@ -166,10 +168,10 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
             value: '1.74 tCO₂e/t',
             numericValue: 1.74,
             unit: 'tCO₂e/t',
-            confidence: 0.92,
-            boundingBox: { page: 1, x: 135, y: 415, width: 150, height: 26 },
+            confidence: 0.91,
+            boundingBox: { page: 1, x: 132, y: 430, width: 160, height: 26 },
             status: 'ai_proposed',
-            notes: 'Scope 1 direct process & fuel combustion'
+            notes: 'Calculated at supplier installation boundary'
           },
           {
             id: `f-${Date.now()}-4`,
@@ -179,9 +181,9 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
             numericValue: 0.22,
             unit: 'tCO₂e/t',
             confidence: 0.89,
-            boundingBox: { page: 1, x: 135, y: 445, width: 150, height: 26 },
+            boundingBox: { page: 1, x: 132, y: 465, width: 160, height: 26 },
             status: 'ai_proposed',
-            notes: 'Grid factor applied under Annex III'
+            notes: 'Electricity grid factor applied'
           }
         ]
       };
@@ -189,35 +191,40 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
       setTimeout(() => {
         onDocumentAdded(newDoc);
         onClose();
-      }, 800);
-    }, 3400);
+      }, 900);
+    }, 3600);
   };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title">
-      {/* Backdrop */}
+      {/* Dimmed backdrop */}
       <div 
-        className="fixed inset-0 bg-[#121614]/40 transition-opacity backdrop-blur-[1px]"
+        className="fixed inset-0 bg-[#000000]/50 transition-opacity backdrop-blur-[2px] animate-backdrop-in"
         onClick={onClose}
         aria-hidden="true"
       />
 
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="relative w-full max-w-xl rounded-[8px] bg-white border border-[#e2e2dc] shadow-2xl overflow-hidden">
+        <div 
+          ref={containerRef}
+          tabIndex={-1}
+          className="relative w-full max-w-xl rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-subtle)] shadow-2xl overflow-hidden animate-toast-in focus:outline-none"
+        >
           {/* Header */}
-          <div className="px-6 py-4 border-b border-[#e5e5de] bg-[#fbfbfa] flex items-center justify-between">
+          <div className="px-6 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-subtle)] flex items-center justify-between">
             <div>
-              <h2 id="upload-modal-title" className="text-sm font-semibold text-[#191c1e] tracking-tight">
+              <h2 id="upload-modal-title" className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
                 Add Supplier Evidence
               </h2>
-              <p className="text-xs text-[#5a6065]">
+              <p className="text-xs text-[var(--text-secondary)]">
                 Supported: Commercial Invoices, EPDs, and Accredited Emissions Statements
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded text-[#5a6065] hover:text-[#191c1e] hover:bg-[#f0f0eb]"
+              aria-label="Close upload modal"
+              className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-panel)] transition-colors focus-ring cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -232,63 +239,74 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
-                  className={`border-2 border-dashed rounded-[6px] p-8 text-center transition-all cursor-pointer group ${
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Click to browse or drop supplier document here"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSimulateUpload(0);
+                    }
+                  }}
+                  className={`border-2 border-dashed rounded-lg p-8 text-center transition-all cursor-pointer group focus-ring ${
                     isDragging
-                      ? 'border-[#3d5042] bg-[#ecf7ef] scale-[1.01] ring-4 ring-[#c8e6ce]/50'
-                      : 'border-[#d8d8ce] hover:border-[#3d5042] bg-[#fbfbfa] hover:bg-[#f6f6f3]'
+                      ? 'border-[var(--accent-sage)] bg-[var(--status-verified-bg)] scale-[1.01] ring-4 ring-[var(--status-verified-border)]'
+                      : 'border-[var(--border-strong)] hover:border-[var(--accent-sage)] bg-[var(--bg-subtle)] hover:bg-[var(--bg-panel)]'
                   }`}
                 >
                   <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center transition-transform ${
-                    isDragging ? 'bg-[#3d5042] text-white scale-110' : 'bg-[#eaf0eb] border border-[#c8e6ce] text-[#3d5042] group-hover:scale-105'
+                    isDragging ? 'bg-[var(--accent-sage)] text-white scale-110' : 'bg-[var(--accent-sage-light)] border border-[var(--border-subtle)] text-[var(--accent-sage)] group-hover:scale-105'
                   }`}>
                     <UploadCloud className="w-6 h-6" />
                   </div>
-                  <div className="text-xs font-semibold text-[#191c1e]">
+                  <div className="text-xs font-semibold text-[var(--text-primary)]">
                     {isDragging ? 'Drop file now to ingest & fingerprint' : 'Click to browse or drop supplier document here'}
                   </div>
-                  <div className="text-[11px] text-[#5a6065] mt-1">
+                  <div className="text-[11px] text-[var(--text-secondary)] mt-1">
                     Accepts PDF, XML (TARIC declaration), or EPD files up to 25 MB
                   </div>
-                  <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[3px] bg-white border border-[#e5e5de] font-mono text-[10px] text-[#5a6065]">
-                    <ShieldCheck className="w-3 h-3 text-[#1b6830]" />
+                  <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-[var(--bg-surface)] border border-[var(--border-subtle)] font-mono text-[10px] text-[var(--text-secondary)]">
+                    <ShieldCheck className="w-3 h-3 text-[var(--status-verified-text)]" />
                     Automatic SHA-256 evidence fingerprinting on ingestion
                   </div>
                 </div>
 
                 {/* Preset Fast-Test Demonstrations */}
                 <div>
-                  <div className="text-[11px] font-semibold text-[#848a90] uppercase tracking-wider mb-2">
+                  <div className="text-[11px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2">
                     Or select pre-staged supplier evidence file:
                   </div>
                   <div className="grid grid-cols-1 gap-2">
                     <button
                       type="button"
                       onClick={() => handleSimulateUpload(0)}
-                      className="p-3 text-left rounded-[4px] bg-[#fbfbfa] border border-[#e5e5de] hover:border-[#3d5042] hover:bg-white transition-all text-xs flex items-center justify-between"
+                      aria-label="Simulate ingest for Tata Steel Plate"
+                      className="p-3 text-left rounded-[6px] bg-[var(--bg-subtle)] border border-[var(--border-subtle)] hover:border-[var(--accent-sage)] hover:bg-[var(--bg-surface)] transition-all text-xs flex items-center justify-between focus-ring cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5">
-                        <FileText className="w-4 h-4 text-[#3d5042]" />
+                        <FileText className="w-4 h-4 text-[var(--accent-sage)]" />
                         <div>
-                          <div className="font-medium text-[#191c1e]">Tata Steel Plate (Heavy Structural)</div>
-                          <div className="text-[11px] text-[#5a6065]">Invoice · CN 7208 51 20 · 1,250 t</div>
+                          <div className="font-medium text-[var(--text-primary)]">Tata Steel Plate (Heavy Structural)</div>
+                          <div className="text-[11px] text-[var(--text-secondary)]">Invoice · CN 7208 51 20 · 1,250 t</div>
                         </div>
                       </div>
-                      <span className="font-mono text-[11px] text-[#3d5042]">Simulate Ingest →</span>
+                      <span className="font-mono text-[11px] text-[var(--accent-sage)] font-semibold">Simulate Ingest →</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleSimulateUpload(1)}
-                      className="p-3 text-left rounded-[4px] bg-[#fbfbfa] border border-[#e5e5de] hover:border-[#3d5042] hover:bg-white transition-all text-xs flex items-center justify-between"
+                      aria-label="Simulate ingest for Hydro Alunorte Alumina EPD"
+                      className="p-3 text-left rounded-[6px] bg-[var(--bg-subtle)] border border-[var(--border-subtle)] hover:border-[var(--accent-sage)] hover:bg-[var(--bg-surface)] transition-all text-xs flex items-center justify-between focus-ring cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5">
-                        <FileText className="w-4 h-4 text-[#3d5042]" />
+                        <FileText className="w-4 h-4 text-[var(--accent-sage)]" />
                         <div>
-                          <div className="font-medium text-[#191c1e]">Hydro Alunorte Alumina EPD 2026</div>
-                          <div className="text-[11px] text-[#5a6065]">EPD · CN 2818 20 00 · 850 t</div>
+                          <div className="font-medium text-[var(--text-primary)]">Hydro Alunorte Alumina EPD 2026</div>
+                          <div className="text-[11px] text-[var(--text-secondary)]">EPD · CN 2818 20 00 · 850 t</div>
                         </div>
                       </div>
-                      <span className="font-mono text-[11px] text-[#3d5042]">Simulate Ingest →</span>
+                      <span className="font-mono text-[11px] text-[var(--accent-sage)] font-semibold">Simulate Ingest →</span>
                     </button>
                   </div>
                 </div>
@@ -298,26 +316,26 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
               <div className="space-y-6 py-4">
                 {/* Uploaded File Info */}
                 {selectedFile && (
-                  <div className="p-4 rounded-[6px] bg-[#fbfbfa] border border-[#e5e5de] flex items-center justify-between text-xs">
+                  <div className="p-4 rounded-[6px] bg-[var(--bg-subtle)] border border-[var(--border-subtle)] flex items-center justify-between text-xs">
                     <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-[#3d5042]" />
+                      <FileText className="w-5 h-5 text-[var(--accent-sage)]" />
                       <div>
-                        <div className="font-semibold text-[#191c1e]">{selectedFile.name}</div>
-                        <div className="text-[11px] text-[#5a6065]">
+                        <div className="font-semibold text-[var(--text-primary)]">{selectedFile.name}</div>
+                        <div className="text-[11px] text-[var(--text-secondary)]">
                           {selectedFile.size} · Uploaded 09:42 CET · {selectedFile.supplier}
                         </div>
                       </div>
                     </div>
-                    <span className="font-mono text-[11px] text-[#1b6830] bg-[#ecf7ef] px-2 py-0.5 rounded border border-[#c8e6ce]">
+                    <span className="font-mono text-[11px] text-[var(--status-verified-text)] bg-[var(--status-verified-bg)] px-2 py-0.5 rounded border border-[var(--status-verified-border)]">
                       SHA-256 Generated
                     </span>
                   </div>
                 )}
 
                 {/* Progress bar */}
-                <div className="w-full bg-[#ecece6] h-1.5 rounded-full overflow-hidden">
+                <div className="w-full bg-[var(--bg-panel)] h-1.5 rounded-full overflow-hidden">
                   <div 
-                    className="bg-[#3d5042] h-full transition-all duration-500 ease-out"
+                    className="bg-[var(--accent-sage)] h-full transition-all duration-500 ease-out"
                     style={{ width: `${stageProgress}%` }}
                   />
                 </div>
@@ -325,50 +343,50 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                 {/* Stages List */}
                 <div className="space-y-3 text-xs">
                   {/* Stage 1 */}
-                  <div className="flex items-center justify-between p-3 rounded-[4px] bg-white border border-[#e5e5de]">
+                  <div className="flex items-center justify-between p-3 rounded-[6px] bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
                     <div className="flex items-center gap-2.5">
                       {stageProgress >= 25 ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#1b6830]" />
+                        <CheckCircle2 className="w-4 h-4 text-[var(--status-verified-text)]" />
                       ) : (
-                        <Clock className="w-4 h-4 text-[#848a90]" />
+                        <Clock className="w-4 h-4 text-[var(--text-muted)]" />
                       )}
-                      <span className="font-medium text-[#191c1e]">1. Document received & hash locked</span>
+                      <span className="font-medium text-[var(--text-primary)]">1. Document received & hash locked</span>
                     </div>
-                    <span className="font-mono text-[11px] text-[#848a90]">
+                    <span className="font-mono text-[11px] text-[var(--text-muted)]">
                       {stageProgress >= 25 ? 'Complete' : 'Pending'}
                     </span>
                   </div>
 
                   {/* Stage 2 */}
-                  <div className="flex items-center justify-between p-3 rounded-[4px] bg-white border border-[#e5e5de]">
+                  <div className="flex items-center justify-between p-3 rounded-[6px] bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
                     <div className="flex items-center gap-2.5">
                       {stageProgress >= 65 ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#1b6830]" />
+                        <CheckCircle2 className="w-4 h-4 text-[var(--status-verified-text)]" />
                       ) : uploadStage === 'extracting' ? (
-                        <Sparkles className="w-4 h-4 text-[#9e5d03] animate-pulse" />
+                        <Sparkles className="w-4 h-4 text-[var(--status-warning-text)] animate-pulse" />
                       ) : (
-                        <Clock className="w-4 h-4 text-[#848a90]" />
+                        <Clock className="w-4 h-4 text-[var(--text-muted)]" />
                       )}
-                      <span className="font-medium text-[#191c1e]">2. Extracting fields & coordinate mapping</span>
+                      <span className="font-medium text-[var(--text-primary)]">2. Extracting fields & coordinate mapping</span>
                     </div>
-                    <span className="font-mono text-[11px] text-[#848a90]">
+                    <span className="font-mono text-[11px] text-[var(--text-muted)]">
                       {stageProgress >= 65 ? 'Complete (4 fields proposed)' : uploadStage === 'extracting' ? 'Extracting...' : 'Waiting'}
                     </span>
                   </div>
 
                   {/* Stage 3 */}
-                  <div className="flex items-center justify-between p-3 rounded-[4px] bg-white border border-[#e5e5de]">
+                  <div className="flex items-center justify-between p-3 rounded-[6px] bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
                     <div className="flex items-center gap-2.5">
                       {stageProgress >= 100 ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#1b6830]" />
+                        <CheckCircle2 className="w-4 h-4 text-[var(--status-verified-text)]" />
                       ) : uploadStage === 'preparing' ? (
-                        <Clock className="w-4 h-4 text-[#3d5042] animate-spin" />
+                        <Clock className="w-4 h-4 text-[var(--accent-sage)] animate-spin" />
                       ) : (
-                        <Clock className="w-4 h-4 text-[#848a90]" />
+                        <Clock className="w-4 h-4 text-[var(--text-muted)]" />
                       )}
-                      <span className="font-medium text-[#191c1e]">3. Preparing human verification queue</span>
+                      <span className="font-medium text-[var(--text-primary)]">3. Preparing human verification queue</span>
                     </div>
-                    <span className="font-mono text-[11px] text-[#848a90]">
+                    <span className="font-mono text-[11px] text-[var(--text-muted)]">
                       {stageProgress >= 100 ? 'Ready for Auditor' : uploadStage === 'preparing' ? 'Finalizing...' : 'Waiting'}
                     </span>
                   </div>

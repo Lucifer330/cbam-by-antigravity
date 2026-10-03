@@ -1,3 +1,4 @@
+import React from 'react';
 import type { ComplianceStatus } from '../../types/cbam';
 import { CheckCircle2, Clock, AlertTriangle, Archive, ShieldAlert } from 'lucide-react';
 
@@ -12,35 +13,35 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
   switch (status) {
     case 'Needs verification':
       return (
-        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[#fef8eb] text-[#9e5d03] border border-[#f8dfaa] ${sizeClasses}`}>
+        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[var(--status-warning-bg)] text-[var(--status-warning-text)] border border-[var(--status-warning-border)] ${sizeClasses}`}>
           <Clock className="w-3.5 h-3.5 shrink-0" />
           Needs verification
         </span>
       );
     case 'Verified':
       return (
-        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[#ecf7ef] text-[#1b6830] border border-[#c8e6ce] ${sizeClasses}`}>
+        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[var(--status-verified-bg)] text-[var(--status-verified-text)] border border-[var(--status-verified-border)] ${sizeClasses}`}>
           <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
           Verified
         </span>
       );
     case 'Calculated':
       return (
-        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[#f0f4f1] text-[#2c4032] border border-[#cfded2] ${sizeClasses}`}>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#3d5042]" />
+        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[var(--accent-sage-light)] text-[var(--accent-sage-dark)] border border-[var(--border-strong)] ${sizeClasses}`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-sage)]" />
           Calculated
         </span>
       );
     case 'Flagged anomaly':
       return (
-        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[#fdf2f2] text-[#a82323] border border-[#f7cece] ${sizeClasses}`}>
+        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)] ${sizeClasses}`}>
           <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
           Flagged anomaly
         </span>
       );
     case 'Archived':
       return (
-        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[#f2f2ee] text-[#6b7280] border border-[#e2e2dc] ${sizeClasses}`}>
+        <span className={`inline-flex items-center gap-1.5 font-medium rounded-[4px] bg-[var(--bg-panel)] text-[var(--text-secondary)] border border-[var(--border-subtle)] ${sizeClasses}`}>
           <Archive className="w-3.5 h-3.5 shrink-0" />
           Archived
         </span>
@@ -57,8 +58,8 @@ export const VerificationStateBadge: React.FC<{
   switch (status) {
     case 'ai_proposed':
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-[4px] bg-[#f5f5f1] text-[#5a6065] border border-[#e2e2dc]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#848a90]" />
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-[4px] bg-[var(--bg-subtle)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-muted)]" />
           AI proposed (Pending review)
         </span>
       );
@@ -66,22 +67,22 @@ export const VerificationStateBadge: React.FC<{
       return (
         <span 
           title={verifiedBy ? `Verified by ${verifiedBy}` : 'Human confirmed'}
-          className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-[4px] bg-[#ecf7ef] text-[#1b6830] border border-[#c8e6ce]"
+          className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-[4px] bg-[var(--status-verified-bg)] text-[var(--status-verified-text)] border border-[var(--status-verified-border)]"
         >
-          <CheckCircle2 className="w-3 h-3 text-[#1b6830]" />
+          <CheckCircle2 className="w-3 h-3 text-[var(--status-verified-text)]" />
           ✓ Human confirmed
         </span>
       );
     case 'edited':
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-[4px] bg-[#fef8eb] text-[#9e5d03] border border-[#f8dfaa]">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-[4px] bg-[var(--status-warning-bg)] text-[var(--status-warning-text)] border border-[var(--status-warning-border)]">
           <AlertTriangle className="w-3 h-3" />
           Human corrected
         </span>
       );
     case 'rejected':
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-[4px] bg-[#fdf2f2] text-[#a82323] border border-[#f7cece]">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-[4px] bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)]">
           ✕ Rejected
         </span>
       );

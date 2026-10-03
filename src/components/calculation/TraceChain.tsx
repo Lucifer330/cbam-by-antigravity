@@ -103,7 +103,8 @@ export const TraceChain: React.FC<TraceChainProps> = ({
         <button
           type="button"
           onClick={handleReplayTrace}
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#eaf0eb] border border-[#c8e6ce] text-[#2c3d31] font-medium hover:bg-[#dce6dd] transition-all text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042]"
+          aria-label="Replay trace beam animation"
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-[#eaf0eb] border border-[#c8e6ce] text-[#2c3d31] font-medium hover:bg-[#dce6dd] transition-all text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3d5042] cursor-pointer"
         >
           <Play className="w-3.5 h-3.5 text-[#1b6830]" />
           <span>Replay Trace Beam</span>
