@@ -4,7 +4,19 @@ import { DocumentViewer } from '../document/DocumentViewer';
 import { ExtractionPanel } from '../extraction/ExtractionPanel';
 import { PipelineStepper } from '../common/PipelineStepper';
 import { HighlightBeamOverlay } from './HighlightBeamOverlay';
-import { ArrowLeft, FileText, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  FileText, 
+  MapPin, 
+  CheckCircle2, 
+  AlertTriangle, 
+  XCircle, 
+  Layers, 
+  ShieldCheck, 
+  Sparkles,
+  Search,
+  ExternalLink
+} from 'lucide-react';
 
 interface DocumentSplitViewProps {
   documents: CBAMDocument[];
@@ -32,28 +44,33 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
   const currentDoc = documents.find((d) => d.id === currentDocumentId) || documents[0];
   const [highlightedFieldKey, setHighlightedFieldKey] = useState<string | null>(initialFocusedFieldKey || null);
 
+  const verifiedCount = currentDoc.extractedFields.filter(f => f.status === 'human_confirmed').length;
+  const totalCount = currentDoc.extractedFields.length;
+
   return (
-    <div className="flex flex-col lg:h-[calc(100vh-140px)] min-h-[640px] space-y-3">
+    <div className="flex flex-col lg:h-[calc(100vh-130px)] min-h-[640px] space-y-3 font-sans">
       {/* Sub-header with document switcher & navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-2.5 border border-[#e5e5de] rounded-[6px]">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-[var(--bg-surface)] px-4 py-2.5 border border-[var(--border-subtle)] rounded-[8px] shadow-2xs">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={onBack}
-            className="p-1 rounded text-[#5a6065] hover:text-[#191c1e] hover:bg-[#f0f0eb] flex items-center gap-1 text-xs font-medium"
+            aria-label="Back to overview workspace"
+            className="p-1.5 rounded-[4px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] flex items-center gap-1.5 text-xs font-semibold transition-colors focus-ring cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Workspace</span>
           </button>
 
-          <span className="text-[#848a90]">/</span>
+          <span className="text-[var(--border-strong)]">|</span>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#5a6065]">Active Evidence:</span>
+            <span className="text-xs text-[var(--text-secondary)] font-medium">Evidence Dossier:</span>
             <select
               value={currentDoc.id}
               onChange={(e) => onSelectDocumentId(e.target.value)}
-              className="px-2.5 py-1 rounded-[4px] bg-[#fbfbfa] border border-[#d8d8ce] text-xs font-medium text-[#191c1e] focus:outline-none focus:border-[#3d5042]"
+              aria-label="Select active evidence document"
+              className="px-2.5 py-1 rounded-[4px] bg-[var(--bg-subtle)] border border-[var(--border-strong)] text-xs font-semibold text-[var(--text-primary)] focus-ring cursor-pointer"
             >
               {documents.map((doc) => (
                 <option key={doc.id} value={doc.id}>
@@ -65,10 +82,10 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
         </div>
 
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-[#5a6065]">
-            Product: <strong className="text-[#191c1e] font-medium">{currentDoc.productName}</strong>
+          <span className="text-[var(--text-secondary)]">
+            Verified Fields: <strong className="text-[var(--status-verified-text)] font-semibold">{verifiedCount}/{totalCount}</strong>
           </span>
-          <span className="font-mono text-[11px] bg-[#f0f0eb] text-[#3d5042] px-2 py-0.5 rounded border border-[#e2e2dc]">
+          <span className="font-mono text-[11px] bg-[var(--accent-sage-light)] text-[var(--accent-sage-dark)] px-2 py-0.5 rounded border border-[var(--border-strong)] font-semibold">
             CN {currentDoc.cnCode}
           </span>
         </div>
@@ -77,10 +94,10 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
       {/* Active Document 6-Stage Pipeline Stepper Bar */}
       <PipelineStepper documentStatus={currentDoc.status} compact />
 
-      {/* Split-screen container: Stacks to single column below lg breakpoint, 7/5 split on lg+ */}
+      {/* Dual-Pane Split-Screen Container: 7 cols document canvas / 5 cols verified checklist */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 overflow-y-auto lg:overflow-hidden">
-        {/* Left Side: Document Viewer (7 cols on lg) */}
-        <div className="lg:col-span-7 min-h-[500px] lg:min-h-0 lg:h-full overflow-hidden">
+        {/* Left / Right Panel 1: Document Viewer Canvas (7 cols on lg) */}
+        <div className="lg:col-span-7 min-h-[520px] lg:min-h-0 lg:h-full overflow-hidden flex flex-col">
           <DocumentViewer
             document={currentDoc}
             highlightedFieldKey={highlightedFieldKey}
@@ -88,8 +105,8 @@ export const DocumentSplitView: React.FC<DocumentSplitViewProps> = ({
           />
         </div>
 
-        {/* Right Side: Extraction Panel (5 cols on lg) */}
-        <div className="lg:col-span-5 min-h-[500px] lg:min-h-0 lg:h-full overflow-hidden">
+        {/* Panel 2: Audit Checklist & Extraction Queue (5 cols on lg) */}
+        <div className="lg:col-span-5 min-h-[520px] lg:min-h-0 lg:h-full overflow-hidden flex flex-col">
           <ExtractionPanel
             document={currentDoc}
             highlightedFieldKey={highlightedFieldKey}

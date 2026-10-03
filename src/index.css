@@ -331,6 +331,21 @@ canvas + a,
 .reveal-delay-300 { transition-delay: 300ms; }
 .reveal-delay-400 { transition-delay: 400ms; }
 
+/* Audio Waveform Micro-Bar Animations */
+@keyframes waveFrequency {
+  0%, 100% {
+    transform: scaleY(0.3);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1.4);
+    opacity: 1;
+  }
+}
 
-
-
+.animate-waveform-1 { animation: waveFrequency 0.75s ease-in-out 0.0s infinite; }
+.animate-waveform-2 { animation: waveFrequency 0.75s ease-in-out 0.12s infinite; }
+.animate-waveform-3 { animation: waveFrequency 0.75s ease-in-out 0.24s infinite; }
+.animate-waveform-4 { animation: waveFrequency 0.75s ease-in-out 0.36s infinite; }
+.animate-waveform-5 { animation: waveFrequency 0.75s ease-in-out 0.48s infinite; }
+.animate-waveform-6 { animation: waveFrequency 0.75s ease-in-out 0.60s infinite; }
