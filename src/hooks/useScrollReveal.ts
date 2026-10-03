@@ -13,10 +13,25 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(options?
       return;
     }
 
+    let isRevealed = false;
+
+    // 1.5s Safety fallback: ensure element is never stuck hidden during live demos
+    const fallbackTimer = setTimeout(() => {
+      if (!isRevealed && element) {
+        element.classList.add('reveal-visible');
+        isRevealed = true;
+        if (observer) {
+          observer.unobserve(element);
+        }
+      }
+    }, 1500);
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            isRevealed = true;
+            clearTimeout(fallbackTimer);
             entry.target.classList.add('reveal-visible');
             // Unobserve after revealing once
             observer.unobserve(entry.target);
@@ -33,6 +48,7 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(options?
     observer.observe(element);
 
     return () => {
+      clearTimeout(fallbackTimer);
       observer.disconnect();
     };
   }, [options]);
